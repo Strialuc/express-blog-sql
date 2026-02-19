@@ -2,6 +2,9 @@
 //importo lista posts da posts.js
 const listaPosts = require('../data/postsList')
 
+// importo file di connessione
+const connection = require('../data/db');
+
 function index(req, res) {
 
     let filteredList = listaPosts;
