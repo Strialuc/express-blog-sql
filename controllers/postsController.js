@@ -4,6 +4,7 @@ const listaPosts = require('../data/postsList')
 
 // importo file di connessione
 const connection = require('../data/db');
+const { error } = require('node:console');
 
 function index(req, res) {
 
@@ -125,22 +126,39 @@ function modify(req, res) {
 }
 
 function destroy(req, res) {
-    //recupero l'id dall'URL e lo trasformo in un numero con parse int
-    const id = parseInt(req.params.id)
-    //metodo find per trovare il post usando id
-    const post = listaPosts.find((pst) => pst.id === id)
-    //valido che il post esista
-    if (!post) {
-        return res.status(404).json({
-            error: 'not found - errore 404',
-            message: 'prodotto non trovato'
-        });
-    }
-    //rimuovo post con metodo splice 
-    listaPosts.splice(listaPosts.indexOf(post), 1);
-    // forziamo status secondo convenzioni REST che chiude anche function
-    res.sendStatus(204)
+
+    const id = parseInt(req.params.id);
+
+    const sql = 'DELETE FROM posts WHERE id = ?';
+
+    connection.query(sql, [id], (err) => {
+        if (err) return res.status(500).json({ error: 'Failed to delete post' });
+        res.sendStatus(204);
+    });
+
 }
+
+
+
+
+
+//{
+//     //recupero l'id dall'URL e lo trasformo in un numero con parse int
+//     const id = parseInt(req.params.id)
+//     //metodo find per trovare il post usando id
+//     const post = listaPosts.find((pst) => pst.id === id)
+//     //valido che il post esista
+//     if (!post) {
+//         return res.status(404).json({
+//             error: 'not found - errore 404',
+//             message: 'prodotto non trovato'
+//         });
+//     }
+//     //rimuovo post con metodo splice 
+//     listaPosts.splice(listaPosts.indexOf(post), 1);
+//     // forziamo status secondo convenzioni REST che chiude anche function
+//     res.sendStatus(204)
+// }
 
 // esportiamo tutto
 module.exports = { index, show, store, update, destroy, modify }
