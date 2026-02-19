@@ -7,16 +7,35 @@ const connection = require('../data/db');
 
 function index(req, res) {
 
-    let filteredList = listaPosts;
+    const sql = 'SELECT * FROM posts';
 
-    if (req.query.tags) {
-        filteredList = listaPosts.filter(
-            post => post.tags.includes(req.query.tags)
-        );
-    }
+    connection.query(sql, (err, results) => {
 
-    res.json({ numeroPosts: filteredList.length, filteredList });
+        if (err) return res.status(500).json({ error: 'Database query failed' });
+
+        res.json(results);
+    });
 }
+
+
+
+
+
+
+
+
+// commento la logica precedente //{
+
+//     let filteredList = listaPosts;
+
+//     if (req.query.tags) {
+//         filteredList = listaPosts.filter(
+//             post => post.tags.includes(req.query.tags)
+//         );
+//     }
+
+//     res.json({ numeroPosts: filteredList.length, filteredList });
+// }
 
 function show(req, res) {
     const id = parseInt(req.params.id)
