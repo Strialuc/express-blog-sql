@@ -39,18 +39,33 @@ function index(req, res) {
 // }
 
 function show(req, res) {
-    const id = parseInt(req.params.id)
 
-    const postId = listaPosts.find((post) => post.id === id)
+    const id = parseInt(req.params.id);
 
-    if (!postId) {
-        return res.status(404).json({
-            error: 'not found - errore 404',
-            message: 'prodotto non trovato'
-        });
-    }
-    res.json(postId);
+    const sql = 'SELECT * FROM posts WHERE id=?';
+
+    connection.query(sql, [id], (err, results) => {
+        if (err) return res.status(500).json({ error: 'Database quert failed' });
+        if (results.length === 0) return res.status(404).json({ error: 'Post not found' });
+        res.json(results[0]);
+    })
+
+
 }
+
+// {
+//     const id = parseInt(req.params.id)
+
+//     const postId = listaPosts.find((post) => post.id === id)
+
+//     if (!postId) {
+//         return res.status(404).json({
+//             error: 'not found - errore 404',
+//             message: 'prodotto non trovato'
+//         });
+//     }
+//     res.json(postId);
+// }
 
 function store(req, res) {
     //creo id con metodo date
